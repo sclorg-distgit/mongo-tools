@@ -36,7 +36,7 @@
 
 Name:           %{?scl_prefix}%{repo}
 Version:        3.2.1
-Release:        0.3.git%{shortcommit}%{?dist}
+Release:        0.2.git%{shortcommit}%{?dist}
 Summary:        MongoDB Tools
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -72,7 +72,7 @@ BuildRequires:  %{?scl_prefix}golang(gopkg.in/mgo.v2/bson)
 BuildRequires:  %{?scl_prefix}golang(gopkg.in/tomb.v2)
 %endif
 
-#Conflicts:      mongodb < 3.0.0
+Conflicts:      mongodb < 3.0.0
 
 %description
 The MongoDB tools provides import, export, and diagnostic capabilities.
@@ -298,9 +298,6 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %endif
 
 %changelog
-* Fri Feb 12 2016 Marek Skalicky <mskalick@redhat.com> - 3.1.1-0.3.git17a5573
-- Removed conflict with old versions of mongodb
-
 * Wed Feb 3 2016 Marek Skalicky <mskalick@redhat.com> - 3.1.1-0.2.git17a5573
 - Fixed directory ownership
 

@@ -1,4 +1,4 @@
-%{?scl:%scl_package %{name}}
+%{?scl:%scl_package mongo-tools}
 
 %global with_devel 1
 %global with_bundled 1
@@ -34,7 +34,7 @@
 
 Name:           %{?scl_prefix}%{repo}
 Version:        3.4.5
-Release:        0.2.git%{shortcommit}%{?dist}
+Release:        0.3.git%{shortcommit}%{?dist}
 Summary:        MongoDB Tools
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -164,6 +164,11 @@ This package contains unit tests for project
 providing packages with %{import_path} prefix.
 %endif
 
+# syspath subpackages
+%if 0%{?scl:1}
+%scl_syspaths_package -d
+%endif
+
 %prep
 %setup -q -n %{repo}-%{commit}
 %if ! 0%{?with_bundled}
@@ -257,7 +262,17 @@ echo "%%dir %%{gopath}/src/%{provider}.%{provider_tld}" >> devel.file-list
 sort -u -o devel.file-list devel.file-list
 %endif
 
+# syspath subpackages
+%if 0%{?scl:1}
+binaries='bsondump mongostat mongofiles mongoexport mongoimport mongorestore mongodump mongotop mongooplog'
+binaries_no_man='mongoreplay'
+mans= ; for bin in $binaries; do mans+="${sep}man1/$bin.1.gz" ; sep=' '; done
+%scl_syspaths_install_wrappers -n %{pkg_name} -m script -p bin $binaries
+%scl_syspaths_install_wrappers -n %{pkg_name} -m link -p man $mans
+%scl_syspaths_install_wrappers -n %{pkg_name} -m script -p bin $binaries_no_man
+%endif
 %{?scl:SCLEOF}
+
 %check
 %{?scl:scl enable %{buildscls} - << "SCLEOF"}
 set -ex
@@ -316,7 +331,15 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %doc Godeps README.md CONTRIBUTING.md THIRD-PARTY-NOTICES
 %endif
 
+# syspath subpackages
+%if 0%{?scl:1}
+%scl_syspaths_files
+%endif
+
 %changelog
+* Fri Jun 23 2017 Marek Skalický <mskalick@redhat.com> - 3.4.5-0.3.git4d4d965
+- Add -syspath subpackage
+
 * Thu Jun 22 2017 Marek Skalický <mskalick@redhat.com> - 3.4.5-0.2.git4d4d965
 - Build also mongoreplay
 - patch vendored dependency github.com/spacemonkeygo/spacelog to use syscall.Dup3

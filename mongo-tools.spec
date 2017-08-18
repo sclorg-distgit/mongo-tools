@@ -20,11 +20,11 @@
 # https://github.com/mongodb/mongo-tools
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 %global import_path     %{provider_prefix}
-%global commit          4d4d96583c40a25a4ee7e2d038d75181a300ec3c
+%global commit          29b8883c560319b016f8bd4927807fa36f1a682f
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
 # Git hash in https://github.com/mongodb/mongo which corresponds to Version
-%global mongohash a14d55980c2cdc565d4704a7e3ad37e4e535c1b2
+%global mongohash c55eb86ef46ee7aede3b1e2a5d184a7df4bfb5b5
 
 %global gopath %{_datadir}/gocode
 
@@ -33,8 +33,8 @@
 %global buildscls %{golangscl} %{?scl}
 
 Name:           %{?scl_prefix}%{repo}
-Version:        3.4.5
-Release:        0.5.git%{shortcommit}%{?dist}
+Version:        3.4.6
+Release:        0.1.git%{shortcommit}%{?dist}
 Summary:        MongoDB Tools
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -297,7 +297,7 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 #gotest {import_path}/common/log
 %gotest %{import_path}/common/progress
 %gotest %{import_path}/common/text
-%gotest %{import_path}/common/util
+#%gotest %{import_path}/common/util
 %gotest %{import_path}/mongodump
 %gotest %{import_path}/mongoexport
 %gotest %{import_path}/mongofiles
@@ -337,6 +337,10 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %endif
 
 %changelog
+* Mon Jul 24 2017 Marek Skalický <mskalick@redhat.com> - 3.4.6-0.1.git29b8883
+- Update to latest minor version 3.4.6
+  Resolves: RHBZ#1474253
+
 * Mon Jul 03 2017 Marek Skalický <mskalick@redhat.com> - 3.4.5-0.5.git4d4d965
 - Use go-toolset-7 for building
 

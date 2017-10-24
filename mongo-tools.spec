@@ -20,11 +20,11 @@
 # https://github.com/mongodb/mongo-tools
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 %global import_path     %{provider_prefix}
-%global commit          4d4d96583c40a25a4ee7e2d038d75181a300ec3c
+%global commit          4f093ae71cdb4c6a6e9de7cd1dc67ea4405f0013
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
 # Git hash in https://github.com/mongodb/mongo which corresponds to Version
-%global mongohash a14d55980c2cdc565d4704a7e3ad37e4e535c1b2
+%global mongohash cf38c1b8a0a8dca4a11737581beafef4fe120bcd
 
 %global gopath %{_datadir}/gocode
 
@@ -33,8 +33,8 @@
 %global buildscls %{golangscl} %{?scl}
 
 Name:           %{?scl_prefix}%{repo}
-Version:        3.4.5
-Release:        0.3.git%{shortcommit}%{?dist}
+Version:        3.4.7
+Release:        1%{?dist}
 Summary:        MongoDB Tools
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -53,7 +53,7 @@ Source9:        https://github.com/mongodb/mongo/raw/%{mongohash}/debian/mongoto
 Source10:       https://github.com/mongodb/mongo/raw/%{mongohash}/APACHE-2.0.txt
 
 Patch0:         change-import-path.patch
-Patch1:         use-dup3-on-linux.patch
+#Patch1:         use-dup3-on-linux.patch - fixed in 3.4.7
 
 # e.g. el6 has ppc64 arch without gcc-go, so EA tag is required
 ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64 ppc64le s390x
@@ -174,9 +174,6 @@ providing packages with %{import_path} prefix.
 %if ! 0%{?with_bundled}
 %patch0 -p1
 %endif
-pushd vendor/src/github.com/spacemonkeygo/spacelog/
-%patch1 -p1
-popd
 
 %build
 %{?scl:scl enable %{buildscls} - << "SCLEOF"}
@@ -297,7 +294,7 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 #gotest {import_path}/common/log
 %gotest %{import_path}/common/progress
 %gotest %{import_path}/common/text
-%gotest %{import_path}/common/util
+#%gotest %{import_path}/common/util
 %gotest %{import_path}/mongodump
 %gotest %{import_path}/mongoexport
 %gotest %{import_path}/mongofiles
@@ -337,6 +334,19 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %endif
 
 %changelog
+* Mon Aug 28 2017 Marek Skalický <mskalick@redhat.com> - 3.4.7-1
+- Update to latest minor release
+
+* Mon Jul 24 2017 Marek Skalický <mskalick@redhat.com> - 3.4.6-0.1.git29b8883
+- Update to latest minor version 3.4.6
+  Resolves: RHBZ#1474253
+
+* Mon Jul 03 2017 Marek Skalický <mskalick@redhat.com> - 3.4.5-0.5.git4d4d965
+- Use go-toolset-7 for building
+
+* Mon Jun 26 2017 Marek Skalický <mskalick@redhat.com> - 3.4.5-0.4.git4d4d965
+- Use golang from rh-mongodb32 for building
+
 * Fri Jun 23 2017 Marek Skalický <mskalick@redhat.com> - 3.4.5-0.3.git4d4d965
 - Add -syspath subpackage
 
@@ -350,6 +360,16 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 * Wed Jun 21 2017 Marek Skalický <mskalick@redhat.com> - 3.2.1-0.7.git17a5573
 - Use bundled dependencies
 - Use go-toolset-7 for building
+
+* Tue Sep 27 2016 Marek Skalický <mskalick@redhat.com> - 3.2.1-0.6.git17a5573
+- Fix dependency on -runtime
+   Resolves: RHBZ#1379295
+
+* Wed Jul 27 2016 Marek Skalický <mskalick@redhat.com> - 3.2.1-0.5.git17a5573
+- Rebuild for new golang version
+
+* Fri Jul 22 2016 Marek Skalický <mskalick@redhat.com> - 3.2.1-0.4.git17a5573
+- Use golang from SCL
 
 * Fri Feb 12 2016 Marek Skalicky <mskalick@redhat.com> - 3.1.1-0.3.git17a5573
 - Removed conflict with old versions of mongodb

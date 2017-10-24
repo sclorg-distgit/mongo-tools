@@ -20,11 +20,11 @@
 # https://github.com/mongodb/mongo-tools
 %global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
 %global import_path     %{provider_prefix}
-%global commit          29b8883c560319b016f8bd4927807fa36f1a682f
+%global commit          4f093ae71cdb4c6a6e9de7cd1dc67ea4405f0013
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
 # Git hash in https://github.com/mongodb/mongo which corresponds to Version
-%global mongohash c55eb86ef46ee7aede3b1e2a5d184a7df4bfb5b5
+%global mongohash cf38c1b8a0a8dca4a11737581beafef4fe120bcd
 
 %global gopath %{_datadir}/gocode
 
@@ -33,8 +33,8 @@
 %global buildscls %{golangscl} %{?scl}
 
 Name:           %{?scl_prefix}%{repo}
-Version:        3.4.6
-Release:        0.1.git%{shortcommit}%{?dist}
+Version:        3.4.7
+Release:        1%{?dist}
 Summary:        MongoDB Tools
 License:        ASL 2.0
 URL:            https://%{provider_prefix}
@@ -53,7 +53,7 @@ Source9:        https://github.com/mongodb/mongo/raw/%{mongohash}/debian/mongoto
 Source10:       https://github.com/mongodb/mongo/raw/%{mongohash}/APACHE-2.0.txt
 
 Patch0:         change-import-path.patch
-Patch1:         use-dup3-on-linux.patch
+#Patch1:         use-dup3-on-linux.patch - fixed in 3.4.7
 
 # e.g. el6 has ppc64 arch without gcc-go, so EA tag is required
 ExclusiveArch:  %{ix86} x86_64 %{arm} aarch64 ppc64le s390x
@@ -174,9 +174,6 @@ providing packages with %{import_path} prefix.
 %if ! 0%{?with_bundled}
 %patch0 -p1
 %endif
-pushd vendor/src/github.com/spacemonkeygo/spacelog/
-%patch1 -p1
-popd
 
 %build
 %{?scl:scl enable %{buildscls} - << "SCLEOF"}
@@ -337,6 +334,9 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %endif
 
 %changelog
+* Mon Aug 28 2017 Marek Skalický <mskalick@redhat.com> - 3.4.7-1
+- Update to latest minor release
+
 * Mon Jul 24 2017 Marek Skalický <mskalick@redhat.com> - 3.4.6-0.1.git29b8883
 - Update to latest minor version 3.4.6
   Resolves: RHBZ#1474253
